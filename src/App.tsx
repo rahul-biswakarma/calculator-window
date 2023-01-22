@@ -18,7 +18,7 @@ const App: React.FC = () => {
 	return (
 		<div
 			ref={parentRef}
-			className="relative min-h-[100vh] h-full w-full overflow-hidden select-none"
+			className="relative min-h-[100vh] h-full w-full overflow-hidden select-none bg-heroBg bg-cover bg-center"
 		>
 			<Window
 				windowPosition={windowPosition}
