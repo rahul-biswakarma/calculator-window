@@ -11,7 +11,18 @@ const Window: React.FC<{
 	parentRef: React.RefObject<HTMLDivElement>;
 }> = ({ windowPosition, setWindowPosition, parentRef }) => {
 	let windowRef = useRef<HTMLDivElement>(null);
+
 	var windowPosLocal: WindowPosition;
+
+	// State variables
+	const [showOption, setShowOption] = useState(false);
+	const [isMoving, setIsMoving] = useState(false);
+	const [initialX, setInitialX] = useState(0);
+	const [initialY, setInitialY] = useState(0);
+	const [finalX, setFinalX] = useState(0);
+	const [finalY, setFinalY] = useState(0);
+	const [calculatorText, setCalculatorText] = useState("0");
+
 	useEffect(() => {
 		if (localStorage.getItem("windowPosition"))
 			windowPosLocal = JSON.parse(localStorage.getItem("windowPosition")!);
@@ -19,6 +30,9 @@ const Window: React.FC<{
 			windowRef.current.style.top = `${windowPosLocal.y}px`;
 		if (windowRef.current)
 			windowRef.current.style.left = `${windowPosLocal.x}px`;
+		setWindowPosition(windowPosLocal);
+		if (localStorage.getItem("showOption") === "true") setShowOption(true);
+		else setShowOption(false);
 	}, []);
 
 	const lightButtonCss =
@@ -28,12 +42,6 @@ const Window: React.FC<{
 	const darkButtonCss =
 		"w-[50px] h-[50px] bg-white/5 backdrop-blur-sm flex justify-center items-center border-none";
 	const windowControlButtonCss = "w-[10px] h-[10px] rounded-full";
-
-	const [isMoving, setIsMoving] = useState(false);
-	const [initialX, setInitialX] = useState(0);
-	const [initialY, setInitialY] = useState(0);
-	const [finalX, setFinalX] = useState(0);
-	const [finalY, setFinalY] = useState(0);
 
 	const handleMouseDown = (e: React.MouseEvent) => {
 		setIsMoving(true);
@@ -81,14 +89,15 @@ const Window: React.FC<{
 	};
 
 	const handleMaximizeButtonClick = () => {
-		console.log("Maximize button clicked");
+		setShowOption(!showOption);
+		localStorage.setItem("showOption", JSON.stringify(!showOption));
 		// add any other code here to handle the maximize button click
 	};
 
 	return (
 		<div ref={parentRef}>
 			<div
-				className={`absolute top-[${windowPosition.y}px] left-[${windowPosition.x}px] bg-[#000]/30 backdrop-blur-3xl border-[1px] text-white font-[500] text-[1rem] border-[#49494e] rounded-lg`}
+				className={`absolute top-[${windowPosition.y}px] left-[${windowPosition.x}px] bg-[#000]/30 backdrop-blur-3xl border-[1px] text-white font-[500] text-[1rem] border-[#49494e] rounded-lg	`}
 				ref={windowRef}
 				onMouseDown={handleMouseDown}
 				onMouseMove={handleMouseMove}
@@ -98,67 +107,71 @@ const Window: React.FC<{
 					0
 				</div>
 				<div className="flex gap-[1px]">
-					<div
-						id="optional-buttons"
-						className="flex flex-col gap-[1px]"
-					>
-						<div className="flex gap-[1px]">
-							<span className={`${darkButtonCss}`}>(</span>
-							<span className={`${darkButtonCss}`}>)</span>
-							<span className={`${darkButtonCss}`}>mc</span>
-							<span className={`${darkButtonCss}`}>m+</span>
-							<span className={`${darkButtonCss}`}>m-</span>
-							<span className={`${darkButtonCss}`}>mr</span>
+					{showOption ? (
+						<div
+							id="optional-buttons"
+							className="flex flex-col gap-[1px]"
+						>
+							<div className="flex gap-[1px]">
+								<span className={`${darkButtonCss}`}>(</span>
+								<span className={`${darkButtonCss}`}>)</span>
+								<span className={`${darkButtonCss}`}>mc</span>
+								<span className={`${darkButtonCss}`}>m+</span>
+								<span className={`${darkButtonCss}`}>m-</span>
+								<span className={`${darkButtonCss}`}>mr</span>
+							</div>
+							<div className="flex gap-[1px]">
+								<span className={`${darkButtonCss}`}>
+									2<sup>nd</sup>
+								</span>
+								<span className={`${darkButtonCss}`}>
+									x<sup>2</sup>
+								</span>
+								<span className={`${darkButtonCss}`}>
+									x<sup>3</sup>
+								</span>
+								<span className={`${darkButtonCss}`}>
+									x<sup>y</sup>
+								</span>
+								<span className={`${darkButtonCss}`}>
+									e<sup>x</sup>
+								</span>
+								<span className={`${darkButtonCss}`}>
+									10<sup>x</sup>
+								</span>
+							</div>
+							<div className="flex gap-[1px]">
+								<span className={`${darkButtonCss}`}>x!</span>
+								<span className={`${darkButtonCss}`}>sin</span>
+								<span className={`${darkButtonCss}`}>cos</span>
+								<span className={`${darkButtonCss}`}>tan</span>
+								<span className={`${darkButtonCss}`}>e</span>
+								<span className={`${darkButtonCss}`}>EE</span>
+							</div>
+							<div className="flex gap-[1px]">
+								<span className={`${darkButtonCss}`}>
+									<sup>1</sup>/<sub>x</sub>
+								</span>
+								<span className={`${darkButtonCss}`}>&#8730;x</span>
+								<span className={`${darkButtonCss}`}>&#8731;x</span>
+								<span className={`${darkButtonCss}`}>&#8732;x</span>
+								<span className={`${darkButtonCss}`}>ln</span>
+								<span className={`${darkButtonCss}`}>
+									log<sub>10</sub>
+								</span>
+							</div>
+							<div className="flex gap-[1px]">
+								<span className={`${darkButtonCss}`}>Rad</span>
+								<span className={`${darkButtonCss}`}>sinh</span>
+								<span className={`${darkButtonCss}`}>cosh</span>
+								<span className={`${darkButtonCss}`}>tanh</span>
+								<span className={`${darkButtonCss}`}>&pi;</span>
+								<span className={`${darkButtonCss}`}>Rand</span>
+							</div>
 						</div>
-						<div className="flex gap-[1px]">
-							<span className={`${darkButtonCss}`}>
-								2<sup>nd</sup>
-							</span>
-							<span className={`${darkButtonCss}`}>
-								x<sup>2</sup>
-							</span>
-							<span className={`${darkButtonCss}`}>
-								x<sup>3</sup>
-							</span>
-							<span className={`${darkButtonCss}`}>
-								x<sup>y</sup>
-							</span>
-							<span className={`${darkButtonCss}`}>
-								e<sup>x</sup>
-							</span>
-							<span className={`${darkButtonCss}`}>
-								10<sup>x</sup>
-							</span>
-						</div>
-						<div className="flex gap-[1px]">
-							<span className={`${darkButtonCss}`}>x!</span>
-							<span className={`${darkButtonCss}`}>sin</span>
-							<span className={`${darkButtonCss}`}>cos</span>
-							<span className={`${darkButtonCss}`}>tan</span>
-							<span className={`${darkButtonCss}`}>e</span>
-							<span className={`${darkButtonCss}`}>EE</span>
-						</div>
-						<div className="flex gap-[1px]">
-							<span className={`${darkButtonCss}`}>
-								<sup>1</sup>/<sub>x</sub>
-							</span>
-							<span className={`${darkButtonCss}`}>&#8730;x</span>
-							<span className={`${darkButtonCss}`}>&#8731;x</span>
-							<span className={`${darkButtonCss}`}>&#8732;x</span>
-							<span className={`${darkButtonCss}`}>ln</span>
-							<span className={`${darkButtonCss}`}>
-								log<sub>10</sub>
-							</span>
-						</div>
-						<div className="flex gap-[1px]">
-							<span className={`${darkButtonCss}`}>Rad</span>
-							<span className={`${darkButtonCss}`}>sinh</span>
-							<span className={`${darkButtonCss}`}>cosh</span>
-							<span className={`${darkButtonCss}`}>tanh</span>
-							<span className={`${darkButtonCss}`}>&pi;</span>
-							<span className={`${darkButtonCss}`}>Rand</span>
-						</div>
-					</div>
+					) : (
+						<></>
+					)}
 					<div
 						id="default-buttons"
 						className="flex flex-col gap-[1px]"
@@ -172,10 +185,30 @@ const Window: React.FC<{
 							<span className={`${orangeButtonCss}`}>&divide;</span>
 						</div>
 						<div className="flex gap-[1px]">
-							<span className={`${lightButtonCss}`}>7</span>
-							<span className={`${lightButtonCss}`}>8</span>
-							<span className={`${lightButtonCss}`}>9</span>
-							<span className={`${orangeButtonCss}`}>x</span>
+							<span
+								className={`${lightButtonCss}`}
+								onClick={(e) => setCalculatorText(calculatorText + "7")}
+							>
+								7
+							</span>
+							<span
+								className={`${lightButtonCss}`}
+								onClick={(e) => setCalculatorText(calculatorText + "8")}
+							>
+								8
+							</span>
+							<span
+								className={`${lightButtonCss}`}
+								onClick={(e) => setCalculatorText(calculatorText + "9")}
+							>
+								9
+							</span>
+							<span
+								className={`${orangeButtonCss}`}
+								onClick={(e) => setCalculatorText(calculatorText + "*")}
+							>
+								x
+							</span>
 						</div>
 						<div className="flex gap-[1px]">
 							<span className={`${lightButtonCss}`}>4</span>
@@ -198,15 +231,15 @@ const Window: React.FC<{
 				</div>
 				<div className="flex gap-[5px] absolute top-[0px] left-[0px] p-2">
 					<span
-						className={`${windowControlButtonCss} bg-rose-500`}
+						className={`${windowControlButtonCss} bg-rose-500 cursor-pointer`}
 						onClick={handleCloseButtonClick}
 					></span>
 					<span
-						className={`${windowControlButtonCss} bg-amber-500`}
+						className={`${windowControlButtonCss} bg-amber-500 cursor-pointer`}
 						onClick={handleMinimizeButtonClick}
 					></span>
 					<span
-						className={`${windowControlButtonCss} bg-lime-500`}
+						className={`${windowControlButtonCss} bg-lime-500 cursor-pointer`}
 						onClick={handleMaximizeButtonClick}
 					></span>
 				</div>
